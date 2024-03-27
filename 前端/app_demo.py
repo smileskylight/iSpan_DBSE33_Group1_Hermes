@@ -16,7 +16,7 @@ client = MongoClient(mongo_uri)
 db = client["Taiwan_travel"]
 collection = db["data"]
 
-# llm = ChatOpenAI(openai_api_key="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")
+# llm = ChatOpenAI(openai_api_key="")
 
 
 @app.route("/api/submit", methods=["POST"])
