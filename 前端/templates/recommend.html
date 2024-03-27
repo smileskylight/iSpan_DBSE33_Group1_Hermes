@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <title>recommend</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <!-- 添加Leaflet的CSS文件 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function fetchAIResponse() {
+            // 示例：通过AJAX请求获取AI回应
+            $.ajax({
+                url: '/api/submit', // 更新为实际的API路径
+                type: 'GET', // 或其他适当的HTTP方法
+                success: function (response) {
+                    // 假设response中包含了AI回应的内容
+                    $("#ai_response").text(response.ai_response);
+                },
+                error: function (error) {
+                    console.log(error);
+                    $("#ai_response").text("获取AI回应时出现错误，请稍后再试。");
+                }
+            });
+        }
+
+        // 页面加载完成时获取AI回应
+        $(document).ready(function () {
+            fetchAIResponse();
+        });
+
+    </script>
+    <!-- 自定义样式 -->
+    <style>
+        .place-images {
+            width: 60%;
+            margin: auto;
+            /* 确保整个容器在其父元素中居中 */
+            border-bottom: 5px solid gray;
+            /* 修改了样式以更清晰地表示边框颜色 */
+            display: flex;
+            flex-wrap: wrap;
+            /* 允许图片换行 */
+            justify-content: center;
+            /* 水平居中图片 */
+            align-items: center;
+            /* 垂直居中图片 */
+        }
+
+        img {
+            margin-bottom: 10px;
+            /* 保留图片的底部外边距 */
+            border-radius: 10%;
+            /* 保留图片的边框圆角 */
+        }
+
+        #mapid {
+            height: 900px;
+            width: 900px;
+            margin-top: 140px;
+            margin-bottom: 100px;
+            /* 添加100px的上邊距 */
+        }
+    </style>
+</head>
+
+<body>
+
+    <head class="border-bottom lh-1 py-3">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+            <div class="text-center">
+                <h1 class="blog-header-logo text-body-emphasis text-decoration-none">Hermēs</h1>
+            </div>
+        </div>
+        <!-- ***** Menu Start ***** -->
+        <div class="container nav-scroller py-1 mb-3 border-top border-bottom" style="width: 80%;">
+            <div class="container text-start" style="width: 50%;">
+                <nav class="nav nav-underline justify-content-between" style="height: 50px;">
+                    <a href="/index.html">
+                        <h3>home</h3>
+                    </a>
+                    <a href="/recommed.html">
+                        <h3>recommend</h3>
+                    </a>
+                    <a href="/bi.html">
+                        <h3>BI</h3>
+                    </a>
+                </nav>
+            </div>
+
+        </div>
+    </head>
+
+    <!-- ***** Menu End ***** -->
+    <div class="text-start" style="width: 80%;margin: auto;">
+        <div class="container search-section">
+
+            <!-- 搜索栏 -->
+
+            <div style="height: 50px;"></div>
+            <div>
+                <h2>Hermēs回應：</h2>
+                <p id="ai_response" style="word-break: break-all;width: 100%;">
+
+                </p>
+            </div>
+            <div style="height: 50px;"></div>
+        </div>
+        <!-- 回应区域 -->
+        <div class="">
+
+            <!-- 地图容器 -->
+            <div class="map-container">
+                <div id="mapid" style="margin-top: 0%;margin-left: auto;margin-right: auto;">000</div>
+            </div>
+
+            <!-- 回应区域 -->
+            <div id="response-area" class="row row-cols-2 float-md-left">
+                {% for place in places %}
+                <div class="col">
+                    <div class="place" style="width: 60%;margin: auto;">
+                        <h3>{{ place.name }}</h3>
+                        <p>{{ place.address }}</p>
+
+                    </div>
+                    <div class="place-images">
+                        {% for picture in place.pictures %}
+                        <img src="{{ picture }}" alt="{{ place.name }} image"
+                            style="float: right; margin-bottom: 10px; border-radius: 10%;">
+
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+    <div style="height: 100px;"></div>
+    <footer style="background-color: black; height: 100px;">
+        <div style="width: 90%;float: right;">
+
+            <p style="height: 50px;"></p>
+            <p>Copyright © 2024 <a href="#">BDSE33 第一組</a>
+
+            </p>
+
+
+        </div>
+    </footer>
+    <script>
+        // 使用 tojson 过滤器将 places 转换为 JSON
+        var places = {{ places | tojson | safe }};
+
+        // 初始化 Leaflet 地图
+        var map = L.map('mapid').setView([25.0330, 121.5654], 13);
+
+        // 添加地图瓦片层
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href=" https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        // 遍历 places 数组，并为每个地点添加标记和弹出窗口
+        setTimeout(function () {
+            // 遍历 places 数组，并为每个地点添加标记和弹出窗口
+            places.forEach(function (place) {
+                var marker = L.marker([place.latitude, place.longitude]).addTo(map);
+                marker.bindPopup("<b>" + place.name + "</b><br>" + place.address).openPopup();
+            });
+        }, 35000);
+    </script>
+</body>
+
+</html>

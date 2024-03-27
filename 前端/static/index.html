@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Places</title>
+</head>
+
+<body>
+    <h1>Places</h1>
+    {% for place in places %}
+    <div class="place">
+        <h2>{{ place.name }}</h2>
+        <p>{{ place.address }}</p>
+        <div class="place-images">
+            {% for picture in place.pictures %}
+            <img src="{{ picture }}" alt="{{ place.name }} image">
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</body>
+
+</html>

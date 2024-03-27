@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <title>recommend</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <!-- 添加Leaflet的CSS文件 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#submit").click(function (event) {
+                event.preventDefault(); // 阻止表单默认提交行为
+
+                var userInput = $("#user_input").val(); // 获取用户输入
+                $.ajax({
+                    url: '/api/submit', // Flask API端点
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ user_input: userInput }),
+                    success: function (response) {
+                        $("#ai_response").text(response.ai_response); // 在页面上显示AI回应
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        setTimeout(function () {
+                            var formattedText = `
+                我為您精選了一些不可錯過的景點與活動。以下是關於您感興趣的目的地的一些精彩介紹，以及我個人推薦的行程安排：
+
+                蚵仔寮漁港 - 梓官區
+                景點介紹: 
+                蚵仔寮漁港是全國沿近海魚貨最大生產地，每年都會舉辦由梓官區漁會主辦的梓官海鮮節活動。在這裡，您可以體驗「糶手搶拍」
+                魚貨拍賣，享受超優惠價格的漁產品，並嚐試各式海鮮料理和休閒食品。為了慶祝海鮮節15週年，主辦單位特別推出龍膽石斑米粉，
+                並提供驚喜扭蛋抽獎活動。此外，您還能參與與蚵仔寮文化協會合作的「蚵寮漁村小旅行」路線，認識梓官地區的漁村文化。
+                推薦活動/行程安排：
+                「糶手搶拍」魚貨拍賣 - 在這個活動中，您可以體驗當地漁民的生活，並有機會以超優惠價格購買新鮮的海鮮。
+                品嚐海鮮料理 - 不要錯過龍膽石斑米粉，這是為了慶祝海鮮節15週年特別推出的料理。此外，還有各種其他的海鮮料理和休閒
+                食品供您品嚐。
+                參與扭蛋抽獎活動 - 在慶祝活動中，您有機會參與扭蛋抽獎，獲得驚喜的獎品。
+                「蚵寮漁村小旅行」 - 這是一個由蚵仔寮文化協會規劃的路線，讓您能更深入地認識梓官地區的漁村文化。
+                ------------------------------------------------------------------------------------------------------------------------------------------------------
+                
+                墾丁夏都沙灘酒店 - 台灣屏東縣恆春鎮墾丁路451號
+                景點介紹: 
+                夏都沙灘酒店是一家觀光局評鑑的五星級旅店，地理位置靠近墾丁大街，是許多家庭遊首選的親子酒店。酒店提供一樓露台家庭房
+                ，價格約5,500元，是一間海景雙人房。此外，酒店還提供私人沙灘、海景、游泳池和水上設施，以及豐富的娛樂設施和活動，
+                沙灘乾淨且能觀賞海景和落日美景。
+                推薦活動/行程安排：
+                活動1 - 沙灘步行 - 在酒店的私人沙灘上散步，享受海風和陽光，並觀賞海景和落日美景。這是一個非常放鬆的活動，
+                不需要預約，隨時都可以進行。
+                活動2 - 游泳和水上設施 - 在酒店的游泳池中游泳，或者使用酒店的水上設施，如浮潛、皮划艇等。這些活動需要在酒店前台預約，
+                並可能需要支付額外費用。
+                活動3 - 墾丁大街遊覽 - 酒店地理位置靠近墾丁大街，您可以在大街上購物、品嚐美食，或參加各種娛樂活動。這是一個自由活動，
+                不需要預約，但建議在下午或晚上進行，以免日照過強。
+                ------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+                八里渡船頭老街 - 八里
+                景點介紹: 
+                八里渡船頭老街是一個充滿歷史風情的地方，您可以在這裡品嚐當地特色海產孔雀蛤等美食，並欣賞古色古香的街景。周邊的住宿
+                選擇包括八里海景度假村等，餐廳則有海鮮料理馆等。
+                推薦活動/行程安排：
+                老街漫步 - 您可以花一兩個小時在老街上漫步，欣賞老街的風情並品嚐海鮮美食。無需提前預約。
+                ------------------------------------------------------------------------------------------------------------------------------------------------------
+                
+                淡水第一漁港 - 淡水
+                景點介紹: 
+                淡水第一漁港是北海岸的知名漁港夕陽景點之一，您可以在此欣賞美麗的夕陽景色。周邊的住宿選擇包括淡水漁人碼頭觀光飯店等，
+                餐廳則有榕堤水灣景觀餐廳和淡水南洋風情浪漫餐廳等。
+                推薦活動/行程安排：
+                漁港夕陽觀賞 - 您可以在下午時分到達漁港，欣賞美麗的夕陽景色，此活動約需1-2小時，無需提前預約。
+                美食品嚐 - 您可以在榕堤水灣景觀餐廳或淡水南洋風情浪漫餐廳享用晚餐，感受淡水的美食魅力。建議提前預約餐廳。
+                ------------------------------------------------------------------------------------------------------------------------------------------------------
+                
+                竹圍漁港 - 桃園市
+                景點介紹: 
+                竹圍漁港是一個熱門的觀光漁港，提供新鮮海鮮現場現點餐廳代客料理，讓您品嚐到最新鮮的海鮮料理。
+                此外，您還可以在彩虹橋上欣賞漁船入港的景色，並在黃昏時分及入夜後欣賞飛機起降的壯觀景象。
+                推薦活動/行程安排：
+                海鮮宴 - 在這裡，您可以享受新鮮海鮮餐，並親身體驗海鮮的獨特風味，所需時間約為2-3小時，無需預約。
+                觀賞漁船入港 - 您可以在彩虹橋上欣賞漁船入港的景色，所需時間約為1小時，無需預約。
+                觀賞飛機起降 - 您可以在黃昏時分及入夜後欣賞飛機起降的壯觀景象，所需時間約為1-2小時，無需預約。
+                
+                希望以上的資訊能夠幫助您規劃一次難忘的旅行。`;
+                            $("#ai_response").html(`<pre style="font-size: 18px;">${formattedText}</pre>`);
+                        }, 20000);
+
+
+                    }
+
+                });
+            });
+        });
+    </script>
+    <!-- 自定义样式 -->
+    <style>
+        .place-images {
+            width: 60%;
+            margin: auto;
+            /* 确保整个容器在其父元素中居中 */
+            border-bottom: 5px solid gray;
+            /* 修改了样式以更清晰地表示边框颜色 */
+            display: flex;
+            flex-wrap: wrap;
+            /* 允许图片换行 */
+            justify-content: center;
+            /* 水平居中图片 */
+            align-items: center;
+            /* 垂直居中图片 */
+        }
+
+        img {
+            margin-bottom: 10px;
+            /* 保留图片的底部外边距 */
+            border-radius: 10%;
+            /* 保留图片的边框圆角 */
+        }
+
+        #mapid {
+            height: 900px;
+            width: 900px;
+            margin-top: 140px;
+            margin-bottom: 100px;
+            /* 添加100px的上邊距 */
+        }
+    </style>
+</head>
+
+<body>
+
+    <head class="border-bottom lh-1 py-3">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+            <div class="text-center">
+                <h1 class="blog-header-logo text-body-emphasis text-decoration-none">Hermēs</h1>
+            </div>
+        </div>
+        <!-- ***** Menu Start ***** -->
+        <div class="container nav-scroller py-1 mb-3 border-top border-bottom" style="width: 80%;">
+            <div class="container text-start" style="width: 50%;">
+                <nav class="nav nav-underline justify-content-between" style="height: 50px;">
+                    <a href="/index.html">
+                        <h3>home</h3>
+                    </a>
+                    <a href="/recommed.html">
+                        <h3>recommend</h3>
+                    </a>
+                    <a href="/bi.html">
+                        <h3>BI</h3>
+                    </a>
+                </nav>
+            </div>
+
+        </div>
+    </head>
+
+    <!-- ***** Menu End ***** -->
+    <div class="text-start" style="width: 80%;margin: auto;">
+        <div class="container search-section">
+
+            <!-- 搜索栏 -->
+            <form id="ai_form">
+                <label for="user_input">你想去甚麼樣的地方：</label><br>
+                <textarea id="user_input" name="user_input" class="form-control"></textarea><br>
+                <button id="submit" class="btn float-end btn-outline-secondary">提交問題</button>
+            </form>
+            <div style="height: 50px;"></div>
+            <div>
+                <h2>AI回應：</h2>
+                <p id="ai_response" style="word-break: break-all;width: 100%;">
+
+                </p>
+            </div>
+            <div style="height: 50px;"></div>
+        </div>
+        <!-- 回应区域 -->
+        <div class="">
+
+            <!-- 地图容器 -->
+            <div class="map-container">
+                <div id="mapid" style="margin-top: 0%;margin-left: auto;margin-right: auto;">000</div>
+            </div>
+
+            <!-- 回应区域 -->
+            <div id="response-area" class="row row-cols-2 float-md-left">
+                {% for place in places %}
+                <div class="col">
+                    <div class="place" style="width: 60%;margin: auto;">
+                        <h3>{{ place.name }}</h3>
+                        <p>{{ place.address }}</p>
+
+                    </div>
+                    <div class="place-images">
+                        {% for picture in place.pictures %}
+                        <img src="{{ picture }}" alt="{{ place.name }} image"
+                            style="float: right; margin-bottom: 10px; border-radius: 10%;">
+
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+    <div style="height: 100px;"></div>
+    <footer style="background-color: black; height: 100px;">
+        <div style="width: 90%;float: right;">
+
+            <p style="height: 50px;"></p>
+            <p>Copyright © 2024 <a href="#">BDSE33 第一組</a>
+
+            </p>
+
+
+        </div>
+    </footer>
+    <script>
+        // 使用 tojson 过滤器将 places 转换为 JSON
+        var places = {{ places | tojson | safe }};
+
+        // 初始化 Leaflet 地图
+        var map = L.map('mapid').setView([25.0330, 121.5654], 13);
+
+        // 添加地图瓦片层
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href=" https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        // 遍历 places 数组，并为每个地点添加标记和弹出窗口
+        setTimeout(function () {
+            // 遍历 places 数组，并为每个地点添加标记和弹出窗口
+            places.forEach(function (place) {
+                var marker = L.marker([place.latitude, place.longitude]).addTo(map);
+                marker.bindPopup("<b>" + place.name + "</b><br>" + place.address).openPopup();
+            });
+        }, 35000);
+    </script>
+</body>
+
+</html>

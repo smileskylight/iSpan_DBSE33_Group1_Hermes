@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <title>recommend</title>
+    <script type="text/javascript" nonce="2413663dc055427098b3756e54a"
+        src="//local.adguard.org?ts=1710906404247&amp;type=content-script&amp;dmn=cdn.discordapp.com&amp;url=https%3A%2F%2Fcdn.discordapp.com%2Fattachments%2F1199328437593194637%2F1219857391680487604%2Findex6.html%3Fex%3D660cd3ba%26is%3D65fa5eba%26hm%3Df8eb7be5d3dd7a96175de098c8d83280874abb56106588a4f71adc826e2d50f9%26&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+    <script type="text/javascript" nonce="2413663dc055427098b3756e54a"
+        src="//local.adguard.org?ts=1710906404247&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script>
+    <script type="text/javascript" nonce="2413663dc055427098b3756e54a"
+        src="//local.adguard.org?ts=1710567199932&amp;type=content-script&amp;dmn=cdn.discordapp.com&amp;url=https%3A%2F%2Fcdn.discordapp.com%2Fattachments%2F1199328437593194637%2F1218432485604720660%2Fplaces2.html%3Fex%3D6607a4ad%26is%3D65f52fad%26hm%3Da23ad159a80ba404fdd8a799c4eb5146b59b2674fc8dd73a0c8b19c2badb8f86%26&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+    <script type="text/javascript" nonce="2413663dc055427098b3756e54a"
+        src="//local.adguard.org?ts=1710567199932&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <!-- 添加Leaflet的CSS文件 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <!-- 自定义样式 -->
+    <style>
+        .place-images {
+            width: 60%;
+            margin: auto;
+            /* 确保整个容器在其父元素中居中 */
+            border-bottom: 5px solid gray;
+            /* 修改了样式以更清晰地表示边框颜色 */
+            display: flex;
+            flex-wrap: wrap;
+            /* 允许图片换行 */
+            justify-content: center;
+            /* 水平居中图片 */
+            align-items: center;
+            /* 垂直居中图片 */
+        }
+
+        img {
+            margin-bottom: 10px;
+            /* 保留图片的底部外边距 */
+            border-radius: 10%;
+            /* 保留图片的边框圆角 */
+        }
+
+        #mapid {
+            height: 900px;
+            width: 900px;
+            margin-top: 140px;
+            margin-bottom: 100px;
+            /* 添加100px的上邊距 */
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdn.lyshark.com/javascript/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript"></script>
+
+    <head class="border-bottom lh-1 py-3">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+            <div class="text-center">
+                <h1 class="blog-header-logo text-body-emphasis text-decoration-none">Hermēs</h1>
+            </div>
+        </div>
+        <!-- ***** Menu Start ***** -->
+        <div class="container nav-scroller py-1 mb-3 border-top border-bottom" style="width: 80%;">
+            <div class="container text-start" style="width: 50%;">
+                <nav class="nav nav-underline justify-content-between" style="height: 50px;">
+
+                    <a href="/places.html">
+                        <h3>諮詢</h3>
+                    </a>
+                    <a href="/bii.html">
+                        <h3>資料互動</h3>
+                    </a>
+                </nav>
+            </div>
+
+        </div>
+    </head>
+
+    <!-- ***** Menu End ***** -->
+    <div class="text-start" style="width: 80%;margin: auto;">
+        <div class="container search-section">
+
+            <!-- 搜索栏 -->
+            <form id="ai_form">
+                <label for="user_input">你的問題：</label><br>
+                <textarea id="user_input" name="user_input" class="form-control"></textarea><br>
+                <button id="submit" type="button" class="btn float-end btn-outline-secondary">提交問題</button>
+            </form>
+            <div style="height: 50px;"></div>
+            <div>
+                <h2>Hermēs：</h2>
+                <p id="ai_response" style="word-break: break-all;width: 100%;">
+
+                </p>
+            </div>
+            <div style="height: 50px;"></div>
+        </div>
+        <!-- 回应区域 -->
+        <div class="">
+
+            <!-- 地图容器 -->
+            <div id="maphide" class="map-container">
+                <div id="mapid" style="margin-top: 0%;margin-left: auto;margin-right: auto;"></div>
+            </div>
+
+            <!-- 回应区域 -->
+            <!-- <div id="response-area" class="row row-cols-2 float-md-left">
+                {% for place in places %}
+                <div class="col">
+                    <div class="place" style="width: 60%;margin: auto;">
+                        <h3>{{ place.name }}</h3>
+                        <p>{{ place.address }}</p>
+
+                    </div>
+                    <div class="place-images">
+                        {% for picture in place.pictures %}
+                        <img src="{{ picture }}" alt="{{ place.name }} image"
+                            style="float: right; margin-bottom: 10px; border-radius: 10%;">
+
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div> -->
+            <div id="response-area" class="row row-cols-2 float-md-left">
+                {% for place in places %}
+                <div class="col">
+                    <div class="place" style="width: 60%;margin: auto;">
+                        <h3>{{ place.name }}</h3>
+                        <p>{{ place.address }}</p>
+                    </div>
+                    <div class="place-images">
+                        {% for picture in place.pictures %}
+                        <img src="{{ picture }}" alt="{{ place.name }} image"
+                            style="float: right; margin-bottom: 10px; border-radius: 10%;">
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+    <div style="height: 100px;"></div>
+    <footer style="background-color: black; height: 100px;">
+        <div style="width: 90%;float: right;">
+
+            <p style="height: 50px;"></p>
+            <p>Copyright © 2024 <a href="#">BDSE33 第一組</a>
+
+            </p>
+
+
+        </div>
+    </footer>
+    <script>
+
+        class TypingEffect {
+            constructor(options) {
+                this.container = options.container;
+                this.words = options.words;
+                this.delay = options.delay;
+                this.eraseDelay = options.eraseDelay;
+                this.loop = options.loop;
+                this.typingInterval = null; // 添加這一行
+            }
+
+            start() {
+                const container = this.container;
+                const words = this.words;
+                let wordIndex = 0; // 詞彙索引
+                let charIndex = 0; // 字符索引
+
+                this.typingInterval = setInterval(() => {
+                    // 檢查是否還有詞彙需要顯示
+                    if (wordIndex < words.length) {
+                        // 獲取當前詞彙
+                        const currentWord = words[wordIndex];
+
+                        // 檢查字符索引是否小於當前詞彙的長度
+                        if (charIndex < currentWord.length) {
+                            // 將當前字符添加到容器中
+                            container.textContent += currentWord[charIndex];
+                            charIndex++; // 增加字符索引
+                        } else {
+                            // 當前詞彙已顯示完畢，重置字符索引並準備顯示下一個詞彙
+                            wordIndex++;
+                            charIndex = 0;
+                            container.textContent = ''; // 清空容器
+                        }
+                    } else {
+                        // 所有詞彙都已顯示完畢，根據設置進行循環或停止動畫
+                        if (this.loop) {
+                            wordIndex = 0; // 重置詞彙索引以循環顯示
+                        } else {
+                            clearInterval(this.typingInterval); // 停止動畫
+                        }
+                    }
+                }, this.delay);
+            }
+
+
+
+
+            stop() {
+                clearInterval(this.typingInterval); // 修改這一行
+            }
+        }
+
+
+
+
+
+
+
+        // 點擊按鈕時的事件處理函數
+        $(document).ready(function () {
+            $('#submit').click(function (e) {
+                e.preventDefault(); // 防止表單提交
+
+                // 獲取用戶輸入的數據
+                var user_input = $('#user_input').val();
+
+
+                // 清除先前的回應內容和地圖
+                $('#ai_response').html('');
+
+                // 檢查 map 變數是否已定義
+                if (typeof map !== 'undefined') {
+                    // 清空地图上的所有图层
+                    map.eachLayer(function (layer) {
+                        layer.remove();
+                    });
+                    // 移除地图容器
+                    map.remove();
+                } else {
+                    console.log('map 變數尚未定義');
+                }
+                $('#mapid').empty();
+                // 檢查地圖容器是否已經存在，如果存在則先移除它
+                var existingMapContainer = document.getElementById('mapid');
+                if (existingMapContainer) {
+                    existingMapContainer.parentNode.removeChild(existingMapContainer);
+                }
+
+                // 創建新的地圖容器
+                var newMapContainer = document.createElement('div');
+                newMapContainer.id = 'mapid';
+                newMapContainer.style.marginTop = '0%';
+                newMapContainer.style.marginLeft = 'auto';
+                newMapContainer.style.marginRight = 'auto';
+                newMapContainer.style.position = 'relative';
+
+                // 添加新的地圖容器到 #maphide 中
+                var maphideContainer = document.getElementById('maphide');
+                if (maphideContainer) {
+                    maphideContainer.appendChild(newMapContainer);
+                } else {
+                    console.log('#maphide 元素未找到');
+                }
+
+
+                // 打字機特效
+                var typing_effect_ai = new TypingEffect({
+                    container: document.getElementById('ai_response'),
+                    words: ['查詢中...請稍後...'],
+                    delay: 500,
+                    eraseDelay: 1000,
+                    loop: true
+                });
+
+                // 打字機特效
+                var typing_effect_map = new TypingEffect({
+                    container: document.getElementById('mapid'),
+                    words: ['地圖製作中...請稍後...'],
+                    delay: 500,
+                    eraseDelay: 1000,
+                    loop: true
+                });
+
+
+
+                typing_effect_ai.start();
+                typing_effect_map.start();
+
+
+
+                // 發送Ajax請求到後端
+                $.ajax({
+                    url: '/api/submit', // 後端路由
+                    type: 'POST', // 使用POST方法向後端提交數據
+                    contentType: 'application/json', // 設置數據類型為JSON
+                    data: JSON.stringify({ "user_input": user_input }), // 將用戶輸入的數據轉換為JSON格式
+                    success: function (data) {
+
+
+                        // // 停止打字機特效
+                        typing_effect_ai.stop();
+
+                        // 將從後端收到的資料顯示在網頁上，並在每段文字後換行
+                        $('#ai_response').html(
+                            data.start_response + '<br>' + '<br>' +
+                            data.final_response + '<br>' + '<br>' +
+                            data.end_response
+                        );
+                        $.ajax({
+                            url: '/api/show_places',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ "user_input": user_input }),
+                            success: function (data) {
+                                // 初始化 Leaflet 地图
+                                var map = L.map('mapid').setView([23.6978, 120.9605], 8);
+
+                                // 添加地图瓦片层
+                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+                                    maxZoom: 18,
+                                }).addTo(map);
+
+                                // 延迟执行，等待地图完全加载
+                                setTimeout(function () {
+                                    data.forEach(function (place) {
+                                        var marker = L.marker([place.latitude, place.longitude]).addTo(map);
+                                        marker.bindPopup("<b>" + place.name + "</b><br>" + place.address);
+                                    });
+                                }, 500);
+
+                                // 停止打字机特效
+                                typing_effect_map.stop();
+
+                                // 构建并添加地点信息及图片到页面
+                                data.forEach(function (place) {
+                                    var placeHTML = `
+                <div class="col mb-4">
+                    <div class="place" style="margin: auto;">
+                        <h3>${place.name}</h3>
+                        <p>${place.address}</p>
+                    </div>
+                    <div class="place-images">
+                        ${place.pictures.map(picture => `<img src="${picture}" alt="${place.name} image">`).join('')}
+                    </div>
+                </div>
+            `;
+                                    $('#response-area').append(placeHTML);
+                                });
+                            },
+                            error: function () {
+                                alert('获取地点信息时发生错误！');
+                            }
+                        });
+
+
+
+
+                    },
+                    error: function () {
+                        alert('發生錯誤，無法獲取資料！');
+                    }
+                });
+
+
+
+
+
+            });
+        });
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
